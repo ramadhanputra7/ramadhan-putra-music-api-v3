@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start-prod": "NODE_ENV=production node ./resource/server.js",
     "start-dev": "nodemon ./resource/server.js",
