@@ -1,4 +1,4 @@
-const PlaylistSongsHandler = require('./handler').default;
+const PlaylistSongsHandler = require('./handler');
 const routes = require('./routes');
 
 module.exports = {
