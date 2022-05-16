@@ -3,7 +3,7 @@ const routes = (handler) => [{
     path: '/collaborations',
     handler: handler.postCollaborationHandler,
     options: {
-      auth: 'music_jwt'
+      auth: 'openmusic_jwt'
     }
   },
   {
@@ -11,7 +11,7 @@ const routes = (handler) => [{
     path: '/collaborations',
     handler: handler.deleteCollaborationHandler,
     options: {
-      auth: 'music_jwt'
+      auth: 'openmusic_jwt'
     }
   }
 ];
