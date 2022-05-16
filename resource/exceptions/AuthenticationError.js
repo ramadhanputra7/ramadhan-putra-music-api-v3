@@ -1,4 +1,4 @@
-const ClientError = require('./ClientError').default;
+const ClientError = require('./ClientError');
 
 class AuthenticationError extends ClientError {
   constructor(message) {
