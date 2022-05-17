@@ -1,5 +1,5 @@
 const autoBind = require('auto-bind');
-const ClientError = require('../../exceptions/ClientError').default;
+const ClientError = require('../../exceptions/ClientError');
 
 class UploadsHandler {
     constructor(service, validator) {
@@ -7,7 +7,7 @@ class UploadsHandler {
         this._service = storageService;
         this._albumsService = albumsService;
         this._validator = validator;
-        autoBind(this);
+        this.postUploadImageHandler = this.postUploadImageHandler.bind(this);
     }
 
     async postUploadImageHandler(request, h) {
@@ -16,7 +16,7 @@ class UploadsHandler {
             const { id } = request.params;
             this._validator.validateImageHeaders(cover.hapi.headers);
             const filename = await this._service.writeFile(cover, cover.hapi);
-            const fileloc = `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`;
+            const fileloc = `${request.headers['x-forwarded-proto'] || request.server.info.protocol}://${request.info.host}/upload/images/${filename}`;
             await this._albumsService.addCoverValueById(id, fileloc);
             const response = h.response({
                 status: 'success',

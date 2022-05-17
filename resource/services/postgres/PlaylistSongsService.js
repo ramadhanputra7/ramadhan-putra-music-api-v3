@@ -1,33 +1,42 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
-const NotFoundError = require('../../exceptions/NotFoundError');
+const NotFoundError = require('../../exceptions/NotFoundError')
+
 
 class PlaylistSongsService {
+
     constructor() {
         this._pool = new Pool();
+
     }
 
-    async addSongsInPlaylist(playlistId, songId) {
-        const id = `playlist_songs-${nanoid(16)}`;
-        const result = await this._pool.query({
-            text: 'INSERT INTO playlist_songs VALUES ($1, $2, $3) RETURNING id',
-            values: [id, playlistId, songId],
-        });
+    async addSongsToPlaylist(playlistId, songId) {
+        const id = `playlistsongs-${nanoid(16)}`;
+        const query = {
+            text: 'insert into playlistsongs values ($1,$2,$3) returning id',
+            values: [id, playlistId, songId]
+        };
+        const result = await this._pool.query(query);
+
         if (!result.rows[0].id) {
-            throw new InvariantError('Song dalam Playlist gagal ditambahkan');
+            throw new InvariantError('gagal menambahkan song ke dalam playlist');
         }
         return result.rows[0].id;
     }
 
-    async deleteSongsInPlaylist(playlistId, songId) {
-        const result = await this._pool.query({
-            text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
-            values: [playlistId, songId],
-        });
+    async deleteSongsFromPlaylist(playlistId, songId) {
+
+        const query = {
+            text: 'delete from playlistsongs where playlist_id = $1 and song_id = $2 returning id',
+            values: [playlistId, songId]
+        };
+
+        const result = await this._pool.query(query);
         if (!result.rows.length) {
-            throw new NotFoundError('Song dalam Playlist gagal dihapus. Id tidak ditemukan');
+            throw new NotFoundError('Gagal menghapus song dalam playlist. Id tidak ditemukan');
         }
+
     }
 }
 

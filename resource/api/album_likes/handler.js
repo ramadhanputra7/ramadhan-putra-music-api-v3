@@ -11,18 +11,18 @@ class AlbumLikesHandler {
 
     async postAlbumLikesHandler(request, h) {
         try {
-            const { id: userId } = request.auth.credentials;
-            const { id: albumId } = request.params;
-            await this._albumsService.getAlbumById(albumId);
-            const isDuplicate = await this._service.albumAlreadyLiked(userId, albumId);
+            const { id: user_id } = request.auth.credentials;
+            const { id: album_id } = request.params;
+            await this._albumsService.getAlbumById(album_id);
+            const isDuplicate = await this._service.albumAlreadyLiked(user_id, album_id);
             const retMessage = isDuplicate ?
-                await this._service.deleteAlbumLikes(userId, albumId) :
-                await this._service.addAlbumLikes(userId, albumId);
+                await this._service.deleteAlbumLikes(user_id, album_id) :
+                await this._service.addAlbumLikes(user_id, album_id);
             const response = h.response({
                 status: 'success',
                 message: retMessage,
                 data: {
-                    albumId,
+                    album_id,
                 },
             });
             response.code(201);
@@ -49,8 +49,8 @@ class AlbumLikesHandler {
 
     async countAlbumLikesHandler(request, h) {
         try {
-            const { id: albumId } = request.params;
-            const { dataSource, likes } = await this._service.getAlbumLikesByAlbumId(albumId);
+            const { id: album_id } = request.params;
+            const { dataSource, likes } = await this._service.getAlbumLikesByAlbum_id(album_id);
             const response = h.response({
                 status: 'success',
                 data: {

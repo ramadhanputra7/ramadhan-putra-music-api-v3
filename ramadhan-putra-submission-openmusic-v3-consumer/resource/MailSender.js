@@ -3,8 +3,8 @@ const nodemailer = require('nodemailer');
 class MailSender {
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
+      host: 'smtp.gmail.com',
+      port: 465,
       secure: true,
       auth: {
         user: process.env.MAIL_ADDRESS,
@@ -13,15 +13,15 @@ class MailSender {
     });
   }
 
-  sendEmail(targetEmail, playlistName, content) {
+  sendEmail(targetEmail, content) {
     const message = {
       from: 'Open Music API V3',
       to: targetEmail,
-      subject: `Ekspor Playlist ${playlistName}`,
-      text: `Terlampir hasil dari ekspor playlist ${playlistName}`,
+      subject: 'Ekspor Playlist',
+      text: 'Terlampir hasil dari ekspor Playlists',
       attachments: [
         {
-          filename: `playlist-${playlistName}.json`,
+          filename: 'playlists.json',
           content,
         },
       ],

@@ -61,158 +61,129 @@ const init = async () => {
     const playlistsService = new PlaylistsService(collaborationsService);
     const playlistSongsService = new PlaylistSongsService();
     const playlistSongActivitiesService = new PlaylistSongActivitiesService();
-    const storageService = new StorageService(path.resolve(__dirname, 'api/upload/images'));
+    const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/covers'));
     const cacheService = new CacheService();
     const albumLikesService = new AlbumLikesService(cacheService);
 
-  const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
-    routes: {
-      cors: {
-        origin: ['*'],
+    const server = Hapi.server({
+      port: process.env.PORT,
+      host: process.env.HOST,
+      routes: {
+          cors: {
+              origin: ['*'],
+          },
       },
-    },
-  }, );
-
-  server.ext('onPreResponse', (request, h) => {
-    const {
-      response
-    } = request;
-
-    if (response instanceof ClientError) {
-      const newResponse = h.response({
-        status: 'fail',
-        message: response.message,
-      });
-      newResponse.code(response.statusCode);
-      return newResponse;
-    }
-
-    return response.continue || response;
   });
 
+  //registrasi plugin externally
+
   await server.register([{
-      plugin: Jwt,
-    },
-    {
-      plugin: Inert,
-    },
+          plugin: Jwt,
+      },
+      {
+          plugin: Inert,
+      }
   ]);
 
+  //mendeefinisikan strategy otentifikasi
   server.auth.strategy('openmusic_jwt', 'jwt', {
-    keys: process.env.ACCESS_TOKEN_KEY,
-    verify: {
-      aud: false,
-      iss: false,
-      sub: false,
-      maxAgeSec: process.env.ACCESS_TOKEN_AGE,
-    },
-    validate: (artifacts) => ({
-      isValid: true,
-      credentials: {
-        id: artifacts.decoded.payload.id,
+      keys: process.env.ACCESS_TOKEN_KEY,
+      verify: {
+          aud: false,
+          iss: false,
+          sub: false,
+          maxAgeSec: process.env.ACCESS_TOKEN_AGE
       },
-    }),
-  });
-
+      validate: (artifacts) => ({
+          isValid: true,
+          creedentials: {
+              id: artifacts.decoded.payload.id,
+          }
+      })
+  })
   await server.register([{
-      plugin: songs,
-      options: {
-        service: new SongsService(),
-        validator: SongsValidator,
+          plugin: songs,
+          options: {
+              service: songsService,
+              validator: SongsValidator,
+          },
+      }, {
+          plugin: albums,
+          options: {
+              service: albumsService,
+              validator: AlbumsValidator,
+
+          }
       },
-    },
-    {
-      plugin: albums,
-      options: {
-        service: albumsService,
-        validator: AlbumsValidator,
-        storageService: storageService,
+      {
+          plugin: users,
+          options: {
+              service: usersService,
+              validator: UsersValidator,
+          }
       },
-    },
-    {
-      plugin: users,
-      options: {
-        service: usersService,
-        validator: UsersValidator,
+      {
+          plugin: playlists,
+          options: {
+              service: playlistsService,
+              validator: PlaylistsValidator,
+          }
       },
-    },
-    {
-      plugin: authentications,
-      options: {
-        authenticationsService,
-        usersService,
-        tokenManager: TokenManager,
-        validator: AuthenticationsValidator,
+      {
+          plugin: authentications,
+          options: {
+              authenticationsService,
+              usersService,
+              validator: AuthenticationsValidator,
+              tokenManager: TokenManager,
+          }
       },
-    },
-    {
-      plugin: playlists,
-      options: {
-        service: playlistsService,
-        validator: PlaylistsValidator,
+      {
+          plugin: Collaborations,
+          options: {
+              collaborationsService,
+              validator: CollaborationsValidator,
+              usersService,
+              playlistsService,
+
+          }
       },
-    },
-    {
-      plugin: playlistSongs,
-      options: {
-          service: {
+      {
+          plugin: playlistSongs,
+          options: {
               playlistSongsService,
-              playlistsService,
               songsService,
-              playlistSongActivitiesService,
-          },
-          validator: PlaylistSongsValidator,
-      },
-  },
-    {
-      plugin: Collaborations,
-      options: {
-        collaborationsService,
-        playlistsService,
-        validator: CollaborationsValidator
-      }
-    },
-    {
-      plugin: playlistSongActivities,
-      options: {
-          service: {
-              playlistSongActivitiesService,
               playlistsService,
-          },
+              validator: PlaylistSongsValidator,
+          }
       },
-  },
-  {
-    plugin: _exports,
-    options: {
-        service: {
-            ProducerService,
-            playlistsService,
-        },
-        validator: ExportsValidator,
-    },
-},
-{
-  plugin: uploads,
-  options: {
-      service: {
-          storageService,
-          albumsService,
+      {
+          plugin: _exports,
+          options: {
+              service: ProducerService,
+
+              validator: ExportsValidator,
+              playlistsService,
+          }
       },
-      validator: UploadsValidator,
-  },
-},
-{
-  plugin: albumLikes,
-  options: {
-      service: {
-          albumLikesService,
-          albumsService,
+      {
+          plugin: uploads,
+          options: {
+              service: storageService,
+              validator: UploadsValidator,
+              albumsService,
+          }
       },
-  },
-},
-  ], );
+      {
+          plugin: albumLikes,
+          options: {
+              service: albumLikesService,
+              albumsService,
+          }
+
+      }
+
+  ]);
 
   await server.start();
   console.log(`Server berjalan pada ${server.info.uri}`);

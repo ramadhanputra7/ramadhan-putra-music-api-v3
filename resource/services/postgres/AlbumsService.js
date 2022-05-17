@@ -1,79 +1,86 @@
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
+const { mapDBToAlbumsModel } = require('../../utils');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class AlbumsService {
   constructor() {
-    this._pool = new Pool();
+      this._pool = new Pool();
   }
-  async addAlbum({
-    name,
-    year
-  }) {
-    const id = `album-${nanoid(16)}`;
 
-    const query = {
-      text: 'INSERT INTO albums VALUES($1, $2, $3) RETURNING id',
-      values: [id, name, year],
-    };
+  async addAlbum({ name, year }) {
+      const id = `album-${nanoid(16)}`;
 
-    const fetch = await this._pool.query(query);
+      const query = {
+          text: 'insert into albums values($1, $2, $3)returning id',
+          values: [id, name, year],
+      }
+      const result = await this._pool.query(query);
 
-    if (!fetch.rows[0].id) {
-      throw new InvariantError('Album gagal ditambahkan');
-    }
+      if (!result.rows[0].id) {
+          throw new InvariantError('Gagal menambahkan album')
+      }
+      return result.rows[0].id;
+  }
 
-    return fetch.rows[0].id;
+  async getAlbums() {
+      const result = await this._pool.query('select * from albums');
+      return result.rows[0].id;
   }
 
   async getAlbumById(id) {
-    const queryAlbum = {
-      text: 'SELECT * FROM albums WHERE id = $1',
-      values: [id]
-    };
-    const querySong = {
-      text: 'SELECT songs.id, songs.title, songs.performer FROM songs INNER JOIN albums ON albums.id=songs."albumId" WHERE albums.id=$1',
-      values: [id]
-    };
-    const fetchAlbum = await this._pool.query(queryAlbum);
-    const fetchSong = await this._pool.query(querySong);
+      const query = {
+          text: 'SELECT * from albums where id= $1',
+          values: [id]
+      };
 
-    if (!fetchAlbum.rows.length) {
-      throw new NotFoundError('Album tidak ditemukan');
-    }
-    return {
-      id: fetchAlbum.rows[0].id,
-      name: fetchAlbum.rows[0].name,
-      year: fetchAlbum.rows[0].year,
-      songs: fetchSong.rows
-    };
+      const result = await this._pool.query(query);
+
+      if (!result.rows.length) {
+          throw new NotFoundError('Album tidak ditemukan');
+      }
+      return result.rows.map(mapDBToAlbumsModel)[0];
   }
 
-  async editAlbumById(id, { name,year })
-  {
-    const query = {
-      text: 'UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id',
-      values: [name, year, id]
-    };
-    const fetch = await this._pool.query(query);
+  async editAlbumById(id, { name, year }) {
+      const query = {
+          text: 'update albums set name = $1, year = $2 where id = $3 returning id',
+          values: [name, year, id]
+      }
 
-    if (!fetch.rows.length) {
-      throw new NotFoundError('Gagal memperbarui album. Id tidak ditemukan');
-    }
+      const result = await this._pool.query(query);
+
+      if (!result.rows.length) {
+          throw new NotFoundError('Gagal memberbarui album. Id tidak ditemukan');
+      }
+
   }
 
   async deleteAlbumById(id) {
-    const query = {
-      text: 'DELETE FROM albums WHERE id = $1 RETURNING id',
-      values: [id],
-    };
+      const query = {
+          text: 'delete from albums where id = $1 returning id',
+          values: [id],
+      }
 
-    const fetch = await this._pool.query(query);
+      const result = await this._pool.query(query);
+      if (!result.rows.length) {
+          throw new NotFoundError('Gagal menghapus Catatan. Id tidak ditemukan');
+      }
+  }
 
-    if (!fetch.rows.length) {
-      throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
-    }
+  async addCoverAlbum(id, coverUrl) {
+      console.log(coverUrl, id)
+      const query = {
+          text: 'update albums set "coverUrl" = $1 WHERE id = $2 returning id',
+          values: [coverUrl, id],
+      };
+      const result = await this._pool.query(query);
+
+      if (!result.rows.length) {
+          throw new InvariantError('Cover gagal ditambahkan');
+      }
   }
 }
+
 module.exports = AlbumsService;
