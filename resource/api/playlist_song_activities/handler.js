@@ -1,14 +1,15 @@
-const autoBind = require('auto-bind');
-const ClientError = require('../../exceptions/ClientError').default;
+const ClientError = require('../../exceptions/clientError');
 
-class PlaylistSongActivitiesHandler {
+class playlistSongActivitiesHandler {
     constructor(service) {
-        const { playlistSongActivitiesService, playlistsService } = service;
-        this._service = playlistSongActivitiesService;
+        const { playlistSongsActivitiesService, playlistsService } = service;
+        this._service = playlistSongsActivitiesService;
         this._playlistsService = playlistsService;
-        autoBind(this);
+
+        this.getActivitiesByIdPlaylistHandler = this.getActivitiesByIdPlaylistHandler.bind(this);
     }
 
+    //  get activities based on id
     async getActivitiesByIdPlaylistHandler(request, h) {
         try {
             const { id: credentialId } = request.auth.credentials;
@@ -18,10 +19,7 @@ class PlaylistSongActivitiesHandler {
             activities = await this._service.getActivitiesByIdPlaylist(playlistId, credentialId);
             return {
                 status: 'success',
-                data: {
-                    playlistId,
-                    activities,
-                },
+                data: { playlistId, activities },
             };
         } catch (error) {
             if (error instanceof ClientError) {
@@ -32,16 +30,16 @@ class PlaylistSongActivitiesHandler {
                 response.code(error.statusCode);
                 return response;
             }
-
+            //  Server error
             const response = h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagaln pada server Kami.',
+                status: 'fail',
+                message: 'Maaf, terjadi kegagalan di server kami.',
             });
             response.code(500);
-            console.log(error);
+            console.error(error);
             return response;
         }
     }
 }
 
-module.exports = PlaylistSongActivitiesHandler;
+module.exports = playlistSongActivitiesHandler;

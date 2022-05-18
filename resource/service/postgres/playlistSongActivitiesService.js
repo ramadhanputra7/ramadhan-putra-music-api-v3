@@ -1,24 +1,27 @@
-const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
-const InvariantError = require('../../exceptions/InvariantError');
+const { Pool } = require('pg');
+const InvariantError = require('../../exceptions/invariantError');
 
-class PlaylistSongActivitiesService {
+class playlistSongsActivitiesService {
     constructor() {
         this._pool = new Pool();
     }
 
+    //  add activities to playlist-song-activities table
     async addActivities(playlistId, songId, userId, action) {
-        const id = `playlist_song_activities-${nanoid(16)}`;
-        const result = await this._pool.query({
+        const id = `playlist-song-activities-${nanoid(16)}`;
+        const query = {
             text: 'INSERT INTO playlist_song_activities VALUES ($1, $2, $3, $4, $5) RETURNING id',
             values: [id, playlistId, songId, userId, action],
-        });
+        };
+        const result = await this._pool.query(query);
         if (!result.rows[0].id) {
-            throw new InvariantError('Activity gagal ditambahkan');
+            throw new InvariantError('Activities Playlist gagal ditambahkan.');
         }
         return result.rows[0].id;
     }
 
+    //  get activities playlist based on id
     async getActivitiesByIdPlaylist(id, owner) {
         const result = await this._pool.query({
             text: `SELECT users.username, songs.title, playlist_song_activities.action, playlist_song_activities.time
@@ -31,8 +34,9 @@ class PlaylistSongActivitiesService {
                     ORDER BY playlist_song_activities.time ASC`,
             values: [id, owner],
         });
+
         return result.rows;
     }
 }
 
-module.exports = PlaylistSongActivitiesService;
+module.exports = playlistSongsActivitiesService;

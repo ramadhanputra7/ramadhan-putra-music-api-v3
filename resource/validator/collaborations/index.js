@@ -1,14 +1,13 @@
-const InvariantError = require('../../exceptions/InvariantError');
-const { CollaborationPayloadSchema } = require('./schema');
+const { collaborationPayloadSchema } = require('./schema');
+const InvariantError = require('../../exceptions/invariantError');
 
-const CollaborationsValidator = {
-  validateCollaborationPayload: (payload) => {
-    const validationResult = CollaborationPayloadSchema.validate(payload);
-
-    if (validationResult.error) {
-      throw new InvariantError(validationResult.error.message);
-    }
-  }
+const collaborationsValidator = {
+    validateCollaborationPayload: (payload) => {
+        const validationResult = collaborationPayloadSchema.validate(payload);
+        if (validationResult.error) {
+            throw new InvariantError(validationResult.error.message);
+        }
+    },
 };
 
-module.exports = CollaborationsValidator;
+module.exports = collaborationsValidator;

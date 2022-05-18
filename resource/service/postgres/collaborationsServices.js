@@ -1,16 +1,17 @@
-const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
-const InvariantError = require('../../exceptions/InvariantError')
+const { Pool } = require('pg');
+const InvariantError = require('../../exceptions/invariantError');
 
-class CollaborationsService {
+class collaborationsService {
     constructor() {
         this._pool = new Pool();
     }
+
+    //  add collaborations
     async addCollaboration(playlistId, userId) {
         const id = `collab-${nanoid(16)}`;
-
         const query = {
-            text: 'insert into collaborations values($1,$2, $3) returning id',
+            text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
             values: [id, playlistId, userId],
         };
         const result = await this._pool.query(query);
@@ -20,30 +21,29 @@ class CollaborationsService {
         return result.rows[0].id;
     }
 
-
+    //  delete collaborations from db
     async deleteCollaboration(playlistId, userId) {
         const query = {
-            text: 'delete from collaborations WHERE playlist_id = $1 AND user_id = $2 returning id',
+            text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id',
             values: [playlistId, userId],
         };
         const result = await this._pool.query(query);
-
         if (!result.rows.length) {
             throw new InvariantError('Kolaborasi gagal dihapus');
         }
     }
 
-    async verifyColaborator(playlistId, userId) {
+    //  verify collaborations between users and playlist
+    async verifyCollaborator(playlistId, userId) {
         const query = {
-            text: 'select * from collaborations where playlist_id = $1 and user_id = $2 returning id',
+            text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
             values: [playlistId, userId],
         };
         const result = await this._pool.query(query);
         if (!result.rows.length) {
-            throw new InvariantError('kolaborasi gagal diverifikasi')
+            throw new InvariantError('Kolaborasi gagal diverifikasi');
         }
     }
-
 }
 
-module.exports = CollaborationsService;
+module.exports = collaborationsService;

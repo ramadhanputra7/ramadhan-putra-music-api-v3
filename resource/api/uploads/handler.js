@@ -1,5 +1,4 @@
-const autoBind = require('auto-bind');
-const ClientError = require('../../exceptions/ClientError');
+const ClientError = require('../../exceptions/clientError');
 
 class UploadsHandler {
     constructor(service, validator) {
@@ -7,6 +6,7 @@ class UploadsHandler {
         this._service = storageService;
         this._albumsService = albumsService;
         this._validator = validator;
+
         this.postUploadImageHandler = this.postUploadImageHandler.bind(this);
     }
 
@@ -14,13 +14,22 @@ class UploadsHandler {
         try {
             const { cover } = request.payload;
             const { id } = request.params;
+
             this._validator.validateImageHeaders(cover.hapi.headers);
+
             const filename = await this._service.writeFile(cover, cover.hapi);
-            const fileloc = `${request.headers['x-forwarded-proto'] || request.server.info.protocol}://${request.info.host}/upload/images/${filename}`;
-            await this._albumsService.addCoverValueById(id, fileloc);
+            //  REVIEW (Sudah diedit)
+            //  Penggunaan env untuk response client, perlu dihindari. Hal ini
+            //  akan menimbulkan masalah ketika aplikasi dideploy dengan menggunakan
+            //  apache/nginx sebagai proxy. Akibatnya fileLocation tidak lagi 127.0.0.1:5000,
+            //  tetapi menyesuaikan url yang diketikkan oleh user. Berikut adalah format yang
+            //  lebih baik
+            //  const fileLocation = `${request.headers['x-forwarded-proto'] || request.server.info.protocol}://${request.info.host}/upload/images/${filename}`
+            const filelocation = `${request.headers['x-forwarded-proto'] || request.server.info.protocol}://${request.info.host}/upload/images/${filename}`;
+            await this._albumsService.addCoverValueById(id, filelocation);
             const response = h.response({
                 status: 'success',
-                message: `File gambar telah disimpan dengan nama ${fileloc}`,
+                message: `File telah disimpan, dengan alamat ${filelocation}`,
             });
             response.code(201);
             return response;
@@ -34,9 +43,10 @@ class UploadsHandler {
                 return response;
             }
 
+            // Server error
             const response = h.response({
                 status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server Kami.',
+                message: 'Maaf, terjadi kegagalan di server kami.',
             });
             response.code(500);
             console.error(error);
