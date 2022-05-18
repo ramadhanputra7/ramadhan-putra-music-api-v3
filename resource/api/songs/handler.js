@@ -18,16 +18,16 @@ class songsHandler {
             const {
                 title = 'untitled',
                 year,
-                genre,
                 performer,
+                genre,                
                 duration,
                 albumId,
             } = request.payload;
             const songId = await this._service.addSong({
                 title,
-                year,
-                genre,
+                year,               
                 performer,
+                genre,
                 duration,
                 albumId,
             });
