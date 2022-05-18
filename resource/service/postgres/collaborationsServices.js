@@ -8,11 +8,11 @@ class collaborationsService {
     }
 
     //  add collaborations
-    async addCollaboration(playlistId, userId) {
+    async addCollaboration(playlist_id, user_id) {
         const id = `collab-${nanoid(16)}`;
         const query = {
             text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
-            values: [id, playlistId, userId],
+            values: [id, playlist_id, user_id],
         };
         const result = await this._pool.query(query);
         if (!result.rows.length) {
@@ -22,10 +22,10 @@ class collaborationsService {
     }
 
     //  delete collaborations from db
-    async deleteCollaboration(playlistId, userId) {
+    async deleteCollaboration(playlist_id, user_id) {
         const query = {
             text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id',
-            values: [playlistId, userId],
+            values: [playlist_id, user_id],
         };
         const result = await this._pool.query(query);
         if (!result.rows.length) {
@@ -34,10 +34,10 @@ class collaborationsService {
     }
 
     //  verify collaborations between users and playlist
-    async verifyCollaborator(playlistId, userId) {
+    async verifyCollaborator(playlist_id, user_id) {
         const query = {
             text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
-            values: [playlistId, userId],
+            values: [playlist_id, user_id],
         };
         const result = await this._pool.query(query);
         if (!result.rows.length) {

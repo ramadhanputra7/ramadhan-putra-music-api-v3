@@ -73,33 +73,7 @@ const init = async () => {
             },
         },
     });
-        // registrasi plugin eksternal
-        //  REVIEW
-        // Di sini (sebelum registrasi plugin eksternal) kamu bisa membua
-        //  extentions function untuk life cycle server onPreResponse,
-        //  yang akan mengintervensi response sebelum dikirimkan ke client.
-        //  Hal ini bisa dimanfaatkan untuk menerapkan penanganan error bila response
-        //  tersebut merupakan client error.
-
-    //  server.ext('onPreResponse', (request, h) => {
-    // mendapatkan konteks response dari request
-    //     const {
-    //         response
-    //     } = request;
-
-    //     if (response instanceof ClientError) {
-    //         // membuat response baru dari response toolkit sesuai kebutuhan error handling
-    //         const newResponse = h.response({
-    //             status: 'fail',
-    //             message: response.message,
-    //         });
-    //         newResponse.code(response.statusCode);
-    //         return newResponse;
-    //     }
-
-    //     // jika bukan ClientError, lanjutkan dengan response sebelumnya (tanpa terintervensi)
-    //     return response.continue || response;
-    // });
+        
     await server.register([
         {
             plugin: Jwt,
@@ -109,7 +83,7 @@ const init = async () => {
         },
     ]);
 
-    // Define strategy authentication jwt
+    
     server.auth.strategy('openmusicapp_jwt', 'jwt', {
         keys: process.env.ACCESS_TOKEN_KEY,
         verify: {
