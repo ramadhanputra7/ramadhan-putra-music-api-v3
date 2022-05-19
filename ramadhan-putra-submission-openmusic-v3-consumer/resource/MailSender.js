@@ -12,17 +12,17 @@ class MailSender {
             },
         });
     }
+
     sendEmail(targetEmail, content) {
         const message = {
-            from: 'OpenMusic Apps',
+            from: 'Open Music Apps RJ',
             to: targetEmail,
-            subject: 'Ekspor Playlists Song',
-            text: 'Terlampir hasil dari ekspor playlist',
+            subject: 'Ekspor Playlist Songs',
+            text: 'Terlampir hasil dari ekspor Playlist',
             attachments: [{
-                filename: 'playlistsSong.json',
+                filename: 'playlistSongs.json',
                 content,
-            }, 
-          ],
+            }, ],
         };
         return this._transporter.sendMail(message);
     }
