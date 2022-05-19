@@ -15,18 +15,17 @@ exports.up = (pgm) => {
     year: {
       type: 'integer',
       notNull: true,
+    },    
+    performer: {
+      type: 'TEXT',
+      notNull: true,
     },
     genre: {
       type: 'TEXT',
       notNull: true,
     },
-    performer: {
-      type: 'TEXT',
-      notNull: true,
-    },
     duration: {
       type: 'integer',
-
     },
     album_id: {
       type: 'VARCHAR(30)',

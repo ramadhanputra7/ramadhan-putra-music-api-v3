@@ -8,8 +8,6 @@ class playlistSongActivitiesHandler {
 
         this.getActivitiesByIdPlaylistHandler = this.getActivitiesByIdPlaylistHandler.bind(this);
     }
-
-    //  get activities based on id
     async getActivitiesByIdPlaylistHandler(request, h) {
         try {
             const { id: credentialId } = request.auth.credentials;
@@ -30,7 +28,6 @@ class playlistSongActivitiesHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'fail',
                 message: 'Maaf, terjadi kegagalan di server kami.',

@@ -4,7 +4,6 @@ class songsHandler {
     constructor(service, validator) {
         this._service = service;
         this._validator = validator;
-        // For 'this' below mark on instance from notesService
         this.postSongHandler = this.postSongHandler.bind(this);
         this.getSongByIdHandler = this.getSongByIdHandler.bind(this);
         this.getSongHandler = this.getSongHandler.bind(this);
@@ -48,7 +47,6 @@ class songsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf terjadi kegagalan di server kami.',
@@ -103,7 +101,6 @@ class songsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -132,7 +129,6 @@ class songsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -160,7 +156,6 @@ class songsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf terjadi kegagalan di server kami.',

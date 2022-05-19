@@ -11,7 +11,6 @@ class playlistsService {
         this._cacheService = cacheService;
     }
 
-    //  add playlist to the database, and return the id
     async addPlaylists({ name, credentialId: owner }) {
         const id = `playlist-${nanoid(16)}`;
         const query = {
@@ -24,8 +23,7 @@ class playlistsService {
         }
         return result.rows[0].id;
     }
-
-    //  return playlist user owner
+   
     async getPlaylists(owner) {
         const result = await this._pool.query({
             text: `SELECT playlists.id, playlists.name, users.username FROM playlists 
@@ -37,7 +35,6 @@ class playlistsService {
         return result.rows;
     }
 
-    //  get playlist based on id
     async getPlaylistsById(id) {
         const result = await this._pool.query({
             text: `SELECT playlists.id, playlists.name, users.username FROM playlists 
@@ -51,7 +48,6 @@ class playlistsService {
         return result.rows[0];
     }
 
-    //  delete playlist based on id
     async deletePlaylistById(id) {
         const result = await this._pool.query({
             text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
@@ -62,7 +58,6 @@ class playlistsService {
         }
     }
 
-    //  verify playlist owned by owner
     async verifyPlaylistOwner(id, owner) {
         const query = {
             text: 'SELECT * FROM playlists WHERE id = $1',
@@ -78,7 +73,6 @@ class playlistsService {
         }
     }
 
-    //  verify playlist access based on owner
     async verifyPlaylistAccess(playlist_id, user_id) {
         try {
             await this.verifyPlaylistOwner(playlist_id, user_id);

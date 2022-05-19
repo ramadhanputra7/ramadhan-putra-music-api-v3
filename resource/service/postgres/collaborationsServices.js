@@ -7,7 +7,6 @@ class collaborationsService {
         this._pool = new Pool();
     }
 
-    //  add collaborations
     async addCollaboration(playlist_id, user_id) {
         const id = `collab-${nanoid(16)}`;
         const query = {
@@ -21,7 +20,6 @@ class collaborationsService {
         return result.rows[0].id;
     }
 
-    //  delete collaborations from db
     async deleteCollaboration(playlist_id, user_id) {
         const query = {
             text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id',
@@ -32,8 +30,7 @@ class collaborationsService {
             throw new InvariantError('Kolaborasi gagal dihapus');
         }
     }
-
-    //  verify collaborations between users and playlist
+   
     async verifyCollaborator(playlist_id, user_id) {
         const query = {
             text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',

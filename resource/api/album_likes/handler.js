@@ -27,10 +27,6 @@ class AlbumsLikesHandler {
             response.code(201);
             return response;
         } catch (error) {
-            //  REVIEW
-            //  Kamu bisa menambahkan extensions function pada Hapi ketika
-            //  proses onPreResponse untuk menghindari penulisan berulang pada
-            //  handling error. Silahkan disimak review kode pada berkas server.js.
             if (error instanceof ClientError) {
                 const response = h.response({
                     status: 'fail',
@@ -39,7 +35,6 @@ class AlbumsLikesHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -69,7 +64,6 @@ class AlbumsLikesHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',

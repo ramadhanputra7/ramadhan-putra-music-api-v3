@@ -16,10 +16,8 @@ class collaborationsHandler {
         try {
             this._validator.validateCollaborationPayload(request.payload);
             const { id: credentialId } = request.auth.credentials;
-            //  Check the playlist and user id
             const { playlistId, userId } = request.payload;
             await this._playlistsService.getPlaylistsById(playlistId);
-            //  Check user owning the playlist
             await this._usersService.getUserById(userId);
             await this._playlistsService.verifyPlaylistOwner(playlistId, credentialId);
             const collaborationId = await this._service.addCollaboration(playlistId, userId);
@@ -39,7 +37,6 @@ class collaborationsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -70,7 +67,6 @@ class collaborationsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf terjadi kegagalan di server kami',

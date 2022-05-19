@@ -40,7 +40,6 @@ class authenticationsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            // Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -73,7 +72,6 @@ class authenticationsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            // Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -103,7 +101,6 @@ class authenticationsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            // Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',

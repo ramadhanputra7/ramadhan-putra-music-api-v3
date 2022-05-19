@@ -8,7 +8,6 @@ class playlistSongsService {
         this._pool = new Pool();
     }
 
-    //  add song to playlist
     async addSongsPlaylist(playlist_id, song_id) {
         const id = `playlist-songs-${nanoid(16)}`;
         const query = {
@@ -22,7 +21,6 @@ class playlistSongsService {
         return result.rows[0].id;
     }
 
-    //  delete songs in playlist
     async deleteSongsPlaylist(playlist_id, song_id) {
         const query = {
             text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',

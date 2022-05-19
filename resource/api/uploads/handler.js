@@ -17,14 +17,7 @@ class UploadsHandler {
 
             this._validator.validateImageHeaders(cover.hapi.headers);
 
-            const filename = await this._service.writeFile(cover, cover.hapi);
-            //  REVIEW (Sudah diedit)
-            //  Penggunaan env untuk response client, perlu dihindari. Hal ini
-            //  akan menimbulkan masalah ketika aplikasi dideploy dengan menggunakan
-            //  apache/nginx sebagai proxy. Akibatnya fileLocation tidak lagi 127.0.0.1:5000,
-            //  tetapi menyesuaikan url yang diketikkan oleh user. Berikut adalah format yang
-            //  lebih baik
-            //  const fileLocation = `${request.headers['x-forwarded-proto'] || request.server.info.protocol}://${request.info.host}/upload/images/${filename}`
+            const filename = await this._service.writeFile(cover, cover.hapi);            
             const filelocation = `${request.headers['x-forwarded-proto'] || request.server.info.protocol}://${request.info.host}/upload/images/${filename}`;
             await this._albumsService.addCoverValueById(id, filelocation);
             const response = h.response({
@@ -42,8 +35,6 @@ class UploadsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-
-            // Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',

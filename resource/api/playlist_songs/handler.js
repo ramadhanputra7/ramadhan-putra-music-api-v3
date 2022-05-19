@@ -18,8 +18,6 @@ class PlaylistSongsHandler {
         this.getSongsByIdPlaylistHandler = this.getSongsByIdPlaylistHandler.bind(this);
         this.deleteSongsByIdPlaylistHandler = this.deleteSongsByIdPlaylistHandler.bind(this);
     }
-
-    //  post songs from playlist based on id
     async postSongsByIdPlaylistHandler(request, h) {
         try {
             this._validator.validatePlaylistSongsPayload(request.payload);
@@ -46,7 +44,6 @@ class PlaylistSongsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -57,7 +54,6 @@ class PlaylistSongsHandler {
         }
     }
 
-    //  get songs from playlist based on id
     async getSongsByIdPlaylistHandler(request, h) {
         try {
             const { id: credentialId } = request.auth.credentials;
@@ -79,7 +75,6 @@ class PlaylistSongsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -90,7 +85,6 @@ class PlaylistSongsHandler {
         }
     }
 
-    //  delete playlist based on id
     async deleteSongsByIdPlaylistHandler(request, h) {
         try {
             this._validator.validatePlaylistSongsPayload(request.payload);
@@ -113,7 +107,6 @@ class PlaylistSongsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'fail',
                 message: 'Maaf, terjadi kegagalan di server kami.',

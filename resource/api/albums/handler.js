@@ -32,7 +32,6 @@ class albumsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //    Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf terjadi kegagalan pada server kami.',
@@ -62,7 +61,6 @@ class albumsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //  Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan pada server kami.',
@@ -91,7 +89,6 @@ class albumsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //    Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf, terjadi kegagalan di server kami.',
@@ -119,7 +116,6 @@ class albumsHandler {
                 response.code(error.statusCode);
                 return response;
             }
-            //    Server error
             const response = h.response({
                 status: 'error',
                 message: 'Maaf terjadi kegagalan di server kami.',

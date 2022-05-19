@@ -7,12 +7,11 @@ class playlistSongsActivitiesService {
         this._pool = new Pool();
     }
 
-    //  add activities to playlist-song-activities table
-    async addActivities(playlistId, songId, userId, action) {
+    async addActivities(playlist_id, songId, user_id, action) {
         const id = `playlist-song-activities-${nanoid(16)}`;
         const query = {
             text: 'INSERT INTO playlist_song_activities VALUES ($1, $2, $3, $4, $5) RETURNING id',
-            values: [id, playlistId, songId, userId, action],
+            values: [id, playlist_id, songId, user_id, action],
         };
         const result = await this._pool.query(query);
         if (!result.rows[0].id) {
@@ -21,7 +20,6 @@ class playlistSongsActivitiesService {
         return result.rows[0].id;
     }
 
-    //  get activities playlist based on id
     async getActivitiesByIdPlaylist(id, owner) {
         const result = await this._pool.query({
             text: `SELECT users.username, songs.title, playlist_song_activities.action, playlist_song_activities.time
